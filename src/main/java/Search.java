@@ -41,6 +41,8 @@ public class Search {
 
   }
 
+  private Map<String, Set<String>> wikipediaPagesByExternalURL = new HashMap<>();
+
 
   public Map<String, Set<String>> execute(String query) throws Exception {
 
@@ -55,7 +57,7 @@ public class Search {
     CloseableHttpClient client = HttpClientBuilder.create().build();
     try {
 
-      Map<String, Set<String>> wikipediaPagesByExternalURL = new HashMap<>();
+
 
       while (true) {
 
@@ -113,5 +115,7 @@ public class Search {
 
   }
 
-
+  public Map<String, Set<String>> getWikipediaPagesByExternalURL() {
+    return wikipediaPagesByExternalURL;
+  }
 }

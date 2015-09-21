@@ -13,7 +13,12 @@ public class Service {
 
 
   public void testDomain(String domain) throws Exception {
-    new ExternalLinkChecker().checkLinks(new Search().execute("http://*." + domain), new File(domain + ".txt"));
+    Search search = new Search();
+    search.execute("http://*." + domain);
+    search.execute("https://*." + domain);
+
+    ExternalLinkChecker externalLinkChecker = new ExternalLinkChecker();
+    externalLinkChecker.checkLinks(search.getWikipediaPagesByExternalURL(), new File(domain + ".json"), 10);
   }
 
 }
