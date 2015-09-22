@@ -1,4 +1,4 @@
-Söker Wikipedia efter externa länka för en given domain och dess subdomänder som är 404 eller på annat sätt trasiga. 
+Söker Svenska Wikipedia efter externa länkar som är 404 eller på annat sätt trasiga för en given domain och dess subdomänder.
 
 ```
 usage: java -jar wikipedia-referer.jar
