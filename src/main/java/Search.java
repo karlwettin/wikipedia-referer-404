@@ -30,6 +30,8 @@ public class Search {
   private XPathExpression externalLinkExpression;
   private XPathExpression wikipediaLinkExpression;
 
+  private int maximumExternalURLs = Integer.MAX_VALUE;
+
   public Search() throws Exception {
 
     xPathfactory = XPathFactory.newInstance();
@@ -43,21 +45,18 @@ public class Search {
 
   private Map<String, Set<String>> wikipediaPagesByExternalURL = new HashMap<>();
 
+  private int limit = 100;
+
 
   public Map<String, Set<String>> execute(String query) throws Exception {
 
     String wikipediaLinkPrefix = "https://sv.wikipedia.org";
-
-    int limit = 100;
-
     int offset = 0;
 
     DOMParser parser = new DOMParser();
 
     CloseableHttpClient client = HttpClientBuilder.create().build();
     try {
-
-
 
       while (true) {
 
@@ -82,6 +81,16 @@ public class Search {
           for (int i = 0; i < links.getLength(); i++) {
             Node linkNode = links.item(i);
             String externalLink = externalLinkExpression.evaluate(linkNode);
+
+            if (!externalLink.startsWith("http")) {
+              if (externalLink.startsWith("//")) {
+                externalLink = "https:" + externalLink;
+              } else {
+                System.err.println("Bad input URL: " + externalLink);
+                System.currentTimeMillis();
+              }
+            }
+
             String wikipediaLink = wikipediaLinkPrefix + wikipediaLinkExpression.evaluate(linkNode);
 
             Set<String> pages = wikipediaPagesByExternalURL.get(externalLink);
@@ -91,8 +100,12 @@ public class Search {
             }
 
             pages.add(wikipediaLink);
+
           }
 
+          if (wikipediaPagesByExternalURL.size() >= maximumExternalURLs) {
+            break;
+          }
 
           if (links.getLength() < limit) {
             break;
@@ -118,4 +131,17 @@ public class Search {
   public Map<String, Set<String>> getWikipediaPagesByExternalURL() {
     return wikipediaPagesByExternalURL;
   }
+
+  public void setLimit(int limit) {
+    this.limit = limit;
+  }
+
+  public int getMaximumExternalURLs() {
+    return maximumExternalURLs;
+  }
+
+  public void setMaximumExternalURLs(int maximumExternalURLs) {
+    this.maximumExternalURLs = maximumExternalURLs;
+  }
 }
+
